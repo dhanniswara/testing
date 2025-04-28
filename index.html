@@ -1,1 +1,821 @@
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoRewards - Platform Pengelolaan Sampah Digital</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2E7D32;
+            --accent: #8BC34A;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --gray: #f5f5f5;
+            --text: #333333;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .profile-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .eco-coins {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            margin: 5px 0;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .button-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .button-outline:hover {
+            background-color: var(--light);
+        }
+        
+        .kiosk-list, .rewards-list, .history-list {
+            list-style: none;
+        }
+        
+        .kiosk-item, .reward-item, .history-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .kiosk-item:last-child, .reward-item:last-child, .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .kiosk-icon, .reward-icon, .history-icon {
+            background-color: var(--light);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .kiosk-details, .reward-details, .history-details {
+            flex: 1;
+        }
+        
+        .kiosk-name, .reward-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .kiosk-address, .reward-company, .history-date {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .kiosk-distance {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .reward-points, .history-points {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .history-points.negative {
+            color: #f44336;
+        }
+        
+        .see-all {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--primary);
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+        }
+        
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #777;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        
+        #qr-scanner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+        }
+        
+        #qr-scanner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        #qr-scanner .close-scanner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        #qr-scanner .scan-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border: 2px solid white;
+            border-radius: 10px;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 300px;
+            background-color: #e9e9e9;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kiosk-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        .kiosk-info {
+            margin-bottom: 20px;
+        }
+        
+        .kiosk-info-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .kiosk-info-label {
+            width: 150px;
+            font-weight: 600;
+        }
+        
+        .kiosk-info-value {
+            flex: 1;
+        }
+        
+        .kiosk-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .kiosk-stat {
+            text-align: center;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .kiosk-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .kiosk-stat-label {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .reward-detail-image {
+            width: 100%;
+            height: 200px;
+            background-color: #e9e9e9;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .reward-detail-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .reward-detail-points {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background-color: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 30px;
+            color: var(--primary);
+        }
+        
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .profile-member-since {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .profile-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        @media (min-width: 768px) {
+            nav {
+                top: 0;
+                bottom: auto;
+                padding: 0;
+                box-shadow: none;
+                background-color: transparent;
+                width: auto;
+                right: 20px;
+                left: auto;
+                justify-content: flex-end;
+            }
+            
+            .nav-item {
+                flex-direction: row;
+                margin-left: 20px;
+                font-size: 16px;
+                color: white;
+            }
+            
+            .nav-icon {
+                margin-right: 5px;
+                margin-bottom: 0;
+            }
+            
+            body {
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>EcoRewards</h1>
+        <nav>
+            <a href="#" class="nav-item active" data-target="home">
+                <span class="nav-icon">🏠</span>
+                <span>Beranda</span>
+            </a>
+            <a href="#" class="nav-item" data-target="kiosks">
+                <span class="nav-icon">♻️</span>
+                <span>Kiosk</span>
+            </a>
+            <a href="#" class="nav-item" data-target="rewards">
+                <span class="nav-icon">🎁</span>
+                <span>Rewards</span>
+            </a>
+            <a href="#" class="nav-item" data-target="profile">
+                <span class="nav-icon">👤</span>
+                <span>Profil</span>
+            </a>
+        </nav>
+    </header>
+    
+    <div id="qr-scanner">
+        <div class="close-scanner">&times;</div>
+        <video id="scanner-video"></video>
+        <div class="scan-overlay"></div>
+    </div>
+    
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <div class="container">
+            <div class="card welcome-card">
+                <div>
+                    <h2>Selamat Datang, Greenzoic Ryogacor</h2>
+                    <p>Member Sejak 10 April 2025</p>
+                    <div class="eco-coins">
+                        <span>350 EcoCoins Anda</span>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    👤
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Scan QR Kiosk</h3>
+                <button id="scan-button" class="button">Scan QR Kiosk</button>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Kiosk Terdekat</h3>
+                <ul class="kiosk-list">
+                    <li class="kiosk-item">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Taman Kota</div>
+                            <div class="kiosk-address">Jl. Merdeka No. 10</div>
+                        </div>
+                        <div class="kiosk-distance">0.5 km</div>
+                    </li>
+                    <li class="kiosk-item">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Stasiun Pusat</div>
+                            <div class="kiosk-address">Stasiun Pusat Lt. 1</div>
+                        </div>
+                        <div class="kiosk-distance">1.2 km</div>
+                    </li>
+                    <li class="kiosk-item">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Alun-Alun</div>
+                            <div class="kiosk-address">Alun-Alun Kota</div>
+                        </div>
+                        <div class="kiosk-distance">1.8 km</div>
+                    </li>
+                </ul>
+                <a href="#" class="see-all" data-target="kiosks">Lihat Semua Kiosk</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Tukarkan EcoCoins Anda</h3>
+                <ul class="rewards-list">
+                    <li class="reward-item">
+                        <div class="reward-icon">🌱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Pupuk Organik 1kg</div>
+                            <div class="reward-company">PT EcoPupuk - Dari sampah organik terpilah</div>
+                        </div>
+                        <div class="reward-points">200 poin</div>
+                    </li>
+                    <li class="reward-item">
+                        <div class="reward-icon">🌱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Silica Block</div>
+                            <div class="reward-company">PT EcoBlocks - Dari sampah plastik</div>
+                        </div>
+                        <div class="reward-points">300 poin</div>
+                    </li>
+                </ul>
+                <a href="#" class="see-all" data-target="rewards">Lihat Semua Rewards</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Riwayat Aktivitas</h3>
+                <ul class="history-list">
+                    <li class="history-item">
+                        <div class="history-icon">♻️</div>
+                        <div class="history-details">
+                            <div class="history-name">Setoran Sampah Organik</div>
+                            <div class="history-date">Kiosk Taman Kota, 25 April 2025</div>
+                        </div>
+                        <div class="history-points">+50</div>
+                    </li>
+                    <li class="history-item">
+                        <div class="history-icon">♻️</div>
+                        <div class="history-details">
+                            <div class="history-name">Setoran Sampah Plastik</div>
+                            <div class="history-date">Kiosk Stasiun Pusat, 20 April 2025</div>
+                        </div>
+                        <div class="history-points">+75</div>
+                    </li>
+                    <li class="history-item">
+                        <div class="history-icon">🌱</div>
+                        <div class="history-details">
+                            <div class="history-name">Penukaran Pupuk Organik 1kg</div>
+                            <div class="history-date">18 April 2025</div>
+                        </div>
+                        <div class="history-points negative">-200</div>
+                    </li>
+                </ul>
+                <a href="#" class="see-all" data-target="activity-history">Lihat Semua Riwayat</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Kiosks Page -->
+    <div id="kiosks" class="page">
+        <div class="container">
+            <div class="card">
+                <h3 class="section-title">Peta Kiosk Terdekat</h3>
+                <div class="map-container">
+                    <p>Peta Lokasi Kiosk</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Daftar Kiosk</h3>
+                <ul class="kiosk-list">
+                    <li class="kiosk-item" data-kiosk-id="1">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Taman Kota</div>
+                            <div class="kiosk-address">Jl. Merdeka No. 10</div>
+                        </div>
+                        <div class="kiosk-distance">0.5 km</div>
+                    </li>
+                    <li class="kiosk-item" data-kiosk-id="2">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Stasiun Pusat</div>
+                            <div class="kiosk-address">Stasiun Pusat Lt. 1</div>
+                        </div>
+                        <div class="kiosk-distance">1.2 km</div>
+                    </li>
+                    <li class="kiosk-item" data-kiosk-id="3">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Alun-Alun</div>
+                            <div class="kiosk-address">Alun-Alun Kota</div>
+                        </div>
+                        <div class="kiosk-distance">1.8 km</div>
+                    </li>
+                    <li class="kiosk-item" data-kiosk-id="4">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Mall Central</div>
+                            <div class="kiosk-address">Mall Central Lt. 2</div>
+                        </div>
+                        <div class="kiosk-distance">2.1 km</div>
+                    </li>
+                    <li class="kiosk-item" data-kiosk-id="5">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Pasar Tradisional</div>
+                            <div class="kiosk-address">Pasar Tradisional, Pintu Barat</div>
+                        </div>
+                        <div class="kiosk-distance">2.3 km</div>
+                    </li>
+                    <li class="kiosk-item" data-kiosk-id="6">
+                        <div class="kiosk-icon">♻️</div>
+                        <div class="kiosk-details">
+                            <div class="kiosk-name">Kiosk Universitas</div>
+                            <div class="kiosk-address">Universitas Kota, Fakultas Teknik</div>
+                        </div>
+                        <div class="kiosk-distance">3.0 km</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Kiosk Detail Page -->
+    <div id="kiosk-detail" class="page">
+        <div class="container">
+            <div class="card">
+                <div class="kiosk-details-header">
+                    <button class="back-button" data-target="kiosks">←</button>
+                    <h3 class="section-title kiosk-detail-name">Kiosk Taman Kota</h3>
+                </div>
+                
+                <div class="map-container">
+                    <p>Peta Lokasi Kiosk</p>
+                </div>
+                
+                <div class="kiosk-info">
+                    <div class="kiosk-info-item">
+                        <div class="kiosk-info-label">Alamat:</div>
+                        <div class="kiosk-info-value kiosk-detail-address">Jl. Merdeka No. 10</div>
+                    </div>
+                    <div class="kiosk-info-item">
+                        <div class="kiosk-info-label">Jam Operasional:</div>
+                        <div class="kiosk-info-value">07:00 - 21:00</div>
+                    </div>
+                    <div class="kiosk-info-item">
+                        <div class="kiosk-info-label">Status:</div>
+                        <div class="kiosk-info-value">Buka</div>
+                    </div>
+                </div>
+                
+                <div class="kiosk-stats">
+                    <div class="kiosk-stat">
+                        <div class="kiosk-stat-value">75%</div>
+                        <div class="kiosk-stat-label">Kapasitas</div>
+                    </div>
+                    <div class="kiosk-stat">
+                        <div class="kiosk-stat-value">125 kg</div>
+                        <div class="kiosk-stat-label">Sampah Terkumpul Hari Ini</div>
+                    </div>
+                </div>
+                
+                <button id="scan-button-detail" class="button">Scan QR Kiosk Ini</button>
+                <button class="button button-outline">Petunjuk Arah ke Kiosk</button>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Riwayat Setoran di Kiosk Ini</h3>
+                <ul class="history-list">
+                    <li class="history-item">
+                        <div class="history-icon">♻️</div>
+                        <div class="history-details">
+                            <div class="history-name">Setoran Sampah Organik</div>
+                            <div class="history-date">25 April 2025</div>
+                        </div>
+                        <div class="history-points">+50</div>
+                    </li>
+                    <li class="history-item">
+                        <div class="history-icon">♻️</div>
+                        <div class="history-details">
+                            <div class="history-name">Setoran Sampah Plastik</div>
+                            <div class="history-date">15 April 2025</div>
+                        </div>
+                        <div class="history-points">+40</div>
+                    </li>
+                    <li class="history-item">
+                        <div class="history-icon">♻️</div>
+                        <div class="history-details">
+                            <div class="history-name">Setoran Sampah Kertas</div>
+                            <div class="history-date">12 April 2025</div>
+                        </div>
+                        <div class="history-points">+30</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rewards Page -->
+    <div id="rewards" class="page">
+        <div class="container">
+            <div class="card">
+                <h3 class="section-title">EcoCoins Anda: 350</h3>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Produk Daur Ulang</h3>
+                <ul class="rewards-list">
+                    <li class="reward-item" data-reward-id="1">
+                        <div class="reward-icon">🌱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Pupuk Organik 1kg</div>
+                            <div class="reward-company">PT EcoPupuk - Dari sampah organik terpilah</div>
+                        </div>
+                        <div class="reward-points">200 poin</div>
+                    </li>
+                    <li class="reward-item" data-reward-id="2">
+                        <div class="reward-icon">🌱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Pupuk Organik 3kg</div>
+                            <div class="reward-company">PT EcoPupuk - Dari sampah organik terpilah</div>
+                        </div>
+                        <div class="reward-points">500 poin</div>
+                    </li>
+                    <li class="reward-item" data-reward-id="3">
+                        <div class="reward-icon">🧱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Silica Block Kecil</div>
+                            <div class="reward-company">PT EcoBlocks - Dari sampah plastik</div>
+                        </div>
+                        <div class="reward-points">300 poin</div>
+                    </li>
+                    <li class="reward-item" data-reward-id="4">
+                        <div class="reward-icon">🧱</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Silica Block Besar</div>
+                            <div class="reward-company">PT EcoBlocks - Dari sampah plastik</div>
+                        </div>
+                        <div class="reward-points">600 poin</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3 class="section-title">Voucher Mitra</h3>
+                <ul class="rewards-list">
+                    <li class="reward-item" data-reward-id="5">
+                        <div class="reward-icon">🛒</div>
+                        <div class="reward-details">
+                            <div class="reward-name">Voucher Diskon 10% Sembako</div>
+                            <div class="reward-company">SuperMart - Min. belanja Rp 100.000</div>
+                        </div>
